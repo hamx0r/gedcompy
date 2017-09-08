@@ -775,7 +775,7 @@ def __parse(lines_iter):
             continue
         match = line_format.match(line)
         if not match:
-            raise NotImplementedError(line)
+            continue
 
         level = int(match.groupdict()['level'])
 
@@ -783,7 +783,10 @@ def __parse(lines_iter):
             parent = None
         else:
             level_to_obj = dict((l, obj) for l, obj in level_to_obj.items() if l < level)
-            parent = level_to_obj[level - 1]
+            try:
+                parent = level_to_obj[level - 1]
+            except:
+                continue
 
         element = line_to_element(level=level, parent=parent, tag=match.groupdict()['tag'], value=match.groupdict()['value'], id=match.groupdict()['id'])
         level_to_obj[level] = element
